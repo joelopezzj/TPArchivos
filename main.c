@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#define max 10
 
 ///Estructuras///
 typedef struct
@@ -17,45 +18,72 @@ void agregarAlArchivo(char nombre[]);
 void mostrarArchivo();
 int cantidadRegistros(char archivo[]);
 void cargarDos(char archivo[]);
+void mostrarUnAlumno(stAlumno a);
+void mostrarRegistros(char nombre[]);
+void agregarUnElemento(char nombre[]);
+int pasarLegajoMayores(char nombre[], int arreglo[], int *cantidad);
+void mostrarArreglo(int arreglo[], int cant);
+
 ///Main///
 int main()
 {
     char archivo[] = "alumnos.bin";
     int opcion;
     int registrados;
+    int legajoMayores[max];
+    int cantidad=0;
 
-    do {
+    do
+    {
         printf("\n=== MENU ===\n");
         printf("1. Agregar alumno/s\n");
         printf("2. Mostrar contenido del archivo\n");
         printf("3. Contar cantidad de registros\n");
         printf("4. Cargar dos alummnos\n");
+        printf("5. Mostrar registros de archivo\n");
+        printf("6. Agregar UN alumno\n");
+        printf("7. Agregar legajo de alumnos mayores a mi arreglo\n");
+        printf("8. Mostrar arreglo de mayores\n");
         printf("0. Salir\n");
         printf("Seleccione una opción: ");
         scanf("%d", &opcion);
 
-        switch(opcion) {
-            case 1:
-                agregarAlArchivo(archivo);
-                break;
-            case 2:
-                mostrarArchivo(archivo);
-                break;
-            case 3:
-                registrados = cantidadRegistros(archivo);
-                printf("\nEl Archivo contiene %d alumnos registrados.", registrados);
-                break;
-            case 4:
-                cargarDos(archivo);
-                break;
-            case 0:
-                printf("Saliendo del programa...\n");
-                break;
-            default:
-                printf("Opción inválida. Intente nuevamente.\n");
+        switch(opcion)
+        {
+        case 1:
+            agregarAlArchivo(archivo);
+            break;
+        case 2:
+            mostrarArchivo(archivo);
+            break;
+        case 3:
+            registrados = cantidadRegistros(archivo);
+            printf("\nEl Archivo contiene %d alumnos registrados.", registrados);
+            break;
+        case 4:
+            cargarDos(archivo);
+            break;
+        case 5:
+            mostrarRegistros(archivo);
+            break;
+        case 6:
+            agregarUnElemento(archivo);
+            break;
+        case 7:
+            pasarLegajoMayores(archivo, legajoMayores, &cantidad);
+            break;
+        case 8:
+            mostrarArreglo(legajoMayores, cantidad);
+            break;
+        case 0:
+            printf("Saliendo del programa...\n");
+            break;
+        default:
+            printf("Opción inválida. Intente nuevamente.\n");
         }
 
-    } while(opcion != 0);
+    }
+    while(opcion != 0);
 }
 
 ///Funciones///
@@ -160,7 +188,8 @@ void cargarDos(char archivo[])
     {
         printf("\nElArchivo no esta creado, creando archivo...");
         arch = fopen(archivo, "wb");
-    }else
+    }
+    else
     {
         fclose(arch);
         arch = fopen(archivo, "ab");
@@ -173,3 +202,92 @@ void cargarDos(char archivo[])
     }
     fclose(arch);
 }
+
+/* Ejercicio 5 */
+void mostrarUnAlumno(stAlumno a)
+{
+    printf("===============================");
+    printf("\nNombre: %s", a.nombreYapellido);
+    printf("\nEdad: %d",a.edad);
+    printf("\nAnio de Cursada: %d",a.anio);
+    printf("\n==============================");
+
+}
+
+void mostrarRegistros(char nombre[])
+{
+    FILE *arch;
+    arch = fopen(nombre, "rb");
+    stAlumno aux;
+
+    if(arch == NULL)
+    {
+        return;
+    }
+    while(fread(&aux,sizeof(stAlumno),1,arch) == 1)
+    {
+        mostrarUnAlumno(aux);
+    }
+    fclose(arch);
+    system("pause");
+    system("cls");
+}
+
+/* Ejercicio 6 */
+void agregarUnElemento(char nombre[])
+{
+    FILE *arch;
+    arch= fopen(nombre, "ab");
+    stAlumno aux;
+
+    if(arch == NULL)
+    {
+        return;
+    }
+    aux=crearAlumno();
+    fwrite(&aux, sizeof(stAlumno), 1, arch);
+    fclose(arch);
+    printf("\nAlumno agregado...");
+    system("pause");
+    system("cls");
+}
+
+/* Ejercicio 7 */
+int pasarLegajoMayores(char nombre[], int arreglo[], int *cantidad)
+{
+    FILE *arch;
+    arch= fopen(nombre, "rb");
+    stAlumno a;
+    int i = 0;
+
+    if(arch == NULL )
+    {
+        return 0; //Error
+    }
+
+    while(fread(&a, sizeof(stAlumno), 1, arch) == 1)
+    {
+        if(a.edad >= 18)
+        {
+            arreglo[i] = a.legajo;
+            i++;
+        }
+    }
+    *cantidad = i;
+    fclose(arch);
+    system("pause");
+    system("cls");
+}
+
+void mostrarArreglo(int arreglo[], int cant)
+{
+    for(int i=0; i<cant; i++)
+    {
+        printf("\n============================");
+        printf("\nLegajo: %d", arreglo[i]);
+    }
+    system("pause");
+    system("cls");
+}
+
+/* Ejercicio 8 */

@@ -25,6 +25,7 @@ int pasarLegajoMayores(char nombre[], int arreglo[], int *cantidad);
 void mostrarArreglo(int arreglo[], int cant);
 int contarMayoresA(char nombre[], int edad);
 void mostrarPorRango(char nombre[], int min, int max);
+stAlumno obtenerMayor(char nombre[]);
 int cantPorAnio (char nombre[], int anioBuscado);
 
 
@@ -53,6 +54,7 @@ int main()
         printf("9. Contar alumnos mayores a una edad\n");
         printf("10. Mostrar alumnos por rango de edad\n");
         printf("11. Mostrar cantidad de alumnos por anio\n");
+        printf("12. Obtener alumno mayor\n");
         printf("0. Salir\n");
         printf("Seleccione una opción: ");
         scanf("%d", &opcion);
@@ -114,6 +116,13 @@ int main()
             scanf(" %d", &anioBuscado);
             aux = cantPorAnio(archivo, anioBuscado);
             printf("\nLa cantidad de alumnos registrados en %d son %d.", anioBuscado, aux);
+            system("pause");
+            system("cls");
+            break;
+        case 12:
+            stAlumno mayor;
+            mayor = obtenerMayor(archivo);
+            mostrarUnAlumno(mayor);
             system("pause");
             system("cls");
             break;
@@ -379,6 +388,33 @@ void mostrarPorRango(char nombre[], int min, int max)
 }
 
 /* Ejercicio 10 */
+stAlumno obtenerMayor(char nombre[])
+{
+    FILE *arch;
+    arch = fopen(nombre, "rb");
+    int primero = 1;
+    stAlumno aux, mayor;
+
+    if(arch == NULL)
+    {
+        return aux;
+    }
+
+    while(fread(&aux, sizeof(stAlumno), 1, arch) == 1)
+    {
+        if(primero)
+        {
+            mayor = aux;
+            primero = 0;
+        }
+        else if( aux.edad > mayor.edad)
+        {
+            mayor = aux;
+        }
+    }
+    fclose(arch);
+    return mayor;
+}
 
 /* Ejercicio 11 */
 int cantPorAnio (char nombre[], int anioBuscado)
@@ -403,3 +439,5 @@ int cantPorAnio (char nombre[], int anioBuscado)
     fclose(arch);
     return contador;
 }
+
+/* Ejercicio 12 */

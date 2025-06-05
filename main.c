@@ -27,8 +27,9 @@ int contarMayoresA(char nombre[], int edad);
 void mostrarPorRango(char nombre[], int min, int max);
 stAlumno obtenerMayor(char nombre[]);
 int cantPorAnio (char nombre[], int anioBuscado);
-
-
+int cargaArreglo(stAlumno a[], int dimension);
+void arrayToArchivo(char nombre[], stAlumno arreglo[], int cantidad);
+int archivoToArray(char nombre[], stAlumno arreglo[], int dimension, int anio);
 
 ///Main///
 int main()
@@ -55,6 +56,8 @@ int main()
         printf("10. Mostrar alumnos por rango de edad\n");
         printf("11. Mostrar cantidad de alumnos por anio\n");
         printf("12. Obtener alumno mayor\n");
+        printf("13. Pasar arreglo de alumnos al archivo\n");
+        printf("14. Pasar alumnos de archivo a arreglo\n");
         printf("0. Salir\n");
         printf("Seleccione una opción: ");
         scanf("%d", &opcion);
@@ -63,28 +66,44 @@ int main()
         {
         case 1:
             agregarAlArchivo(archivo);
+            system("pause");
+            system("cls");
             break;
         case 2:
             mostrarArchivo(archivo);
+            system("pause");
+            system("cls");
             break;
         case 3:
             registrados = cantidadRegistros(archivo);
             printf("\nEl Archivo contiene %d alumnos registrados.", registrados);
+            system("pause");
+            system("cls");
             break;
         case 4:
             cargarDos(archivo);
+            system("pause");
+            system("cls");
             break;
         case 5:
             mostrarRegistros(archivo);
+            system("pause");
+            system("cls");
             break;
         case 6:
             agregarUnElemento(archivo);
+            system("pause");
+            system("cls");
             break;
         case 7:
             pasarLegajoMayores(archivo, legajoMayores, &cantidad);
+            system("pause");
+            system("cls");
             break;
         case 8:
             mostrarArreglo(legajoMayores, cantidad);
+            system("pause");
+            system("cls");
             break;
         case 9:
             int edad;
@@ -123,6 +142,24 @@ int main()
             stAlumno mayor;
             mayor = obtenerMayor(archivo);
             mostrarUnAlumno(mayor);
+            system("pause");
+            system("cls");
+            break;
+        case 13:
+            int cantidad;
+            stAlumno lista[50];
+            cantidad = cargaArreglo(lista, 50);
+            arrayToArchivo(archivo, lista, cantidad);
+            system("pause");
+            system("cls");
+            break;
+        case 14:
+            stAlumno arregloporanio[50];
+            int anio;
+            printf("\nIngrese anio deseado:");
+            fflush(stdin);
+            scanf(" %d", &anio);
+            archivoToArray(archivo, arregloporanio, 50, anio);
             system("pause");
             system("cls");
             break;
@@ -440,4 +477,54 @@ int cantPorAnio (char nombre[], int anioBuscado)
     return contador;
 }
 
-/* Ejercicio 12 */
+/* Ejercicio 12 A*/
+//FUNCION AUXILIAR//
+int cargaArreglo(stAlumno a[], int dimension)
+{
+     int i=0;
+    char letra ='s';
+    printf("\n\nIngrese nuevos alumnos al arreglo\n\n");
+
+    while(letra=='s' && i<dimension)
+    {
+        a[i]= crearAlumno();
+        i++;
+
+        printf("\n Quiere seguir cargando? Presione s o n ");
+        fflush(stdin);
+        scanf(" %c", &letra);
+    }
+    return i;
+}
+void arrayToArchivo(char nombre[], stAlumno arreglo[], int cantidad)
+{
+    FILE *arch;
+    arch = fopen(nombre, "ab");
+
+    if(arch!=NULL)
+    {
+        fwrite(arreglo, sizeof(stAlumno), cantidad, arch);
+        fclose(arch);
+    }
+}
+
+/* Ejercicio 12 B*/
+int archivoToArray(char nombre[], stAlumno arreglo[], int dimension, int anio)
+{
+    FILE *arch;
+    arch = fopen(nombre, "rb");
+    int i=0;
+
+    if(arch != NULL)
+    {
+        stAlumno aux;
+
+        while(fread(&aux, sizeof(stAlumno), 1, arch) == 1)
+        {
+            arreglo[i] = aux;
+            i++;
+        }
+    }
+    fclose(arch);
+    return i;
+}
